@@ -5,9 +5,7 @@ public class Enemy {
     private String enemy;
 
     public Enemy()
-    {
-        enemy = generateEnemies();
-    }
+    {}
 
     /** A method that randomly rolls a die to determine between 3 enemy characters and adds 1
      * to the variable count. When count is 3 or more, it guarantees the boss to be generated
@@ -116,7 +114,7 @@ public class Enemy {
      *
      * @return returns an integer representing the amount of damage dealt to the player by the enemy.
      */
-    public int enemyMove(int health)
+    public int enemyMove()
     {
         int dmg=0;
         if (enemy.equals("The Ancient One"))
@@ -126,7 +124,7 @@ public class Enemy {
             int diceNum = (int)(Math.random()*1000);
             if (diceNum == 10)
             {
-                dmg+=health;
+                dmg=2147483647;
             }
         }
         else if (enemy.equals("??????"))
@@ -140,7 +138,6 @@ public class Enemy {
         else if(enemy.equals("Very Extremely Scary Clown")){
             dmg = eatk;
         }
-        health-=dmg;
         return dmg;
     }
 
@@ -151,6 +148,11 @@ public class Enemy {
     public void changeEHP (int dmg)
     {
         ehp-=dmg;
+    }
+
+    public String returnName()
+    {
+        return enemy;
     }
 
 }

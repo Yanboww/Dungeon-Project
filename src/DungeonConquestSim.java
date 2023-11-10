@@ -11,12 +11,13 @@ public class DungeonConquestSim {
     private String ultimate;
     private int dice;
     private int count;
-    private Enemy enemy;
+    final private Enemy enemy;
     final String red ="\u001B[31m";
     final String green = "\u001B[32m";
     final String reset = "\u001B[0m";
     final String blackBG= "\u001B[40m";
     final String magenta = "\u001B[35m";
+    final private String blue = "\u001B[34m";
     /**
      * Constructor for the DungeonConquestSim class. This creates a new instance of a game with
      * the below parameter
@@ -292,11 +293,12 @@ public class DungeonConquestSim {
     public boolean finale()
     {
         int ehp = enemy.returnEHP();
-        if (count==3 & ehp <= 0 || health <= 0)
+        if (!(count==3 & ehp <= 0 || health <= 0) && count<2)
         {
             return true;
         }
         return false;
+
     }
 
     /** The method that returns a finishing message after the conditions for ending the game is met
@@ -343,7 +345,7 @@ public class DungeonConquestSim {
     public boolean victory()
     {
         int ehp = enemy.returnEHP();
-        if (ehp <= 0)
+        if (!(ehp <= 0 || health<=0))
         {
             return true;
         }
@@ -374,12 +376,13 @@ public class DungeonConquestSim {
      */
     public String moveMessage(int moveNum,int dmg,int stamina, int hp)
     {
+        String enemyName = enemy.returnName();
         String phrase ="";
         if (moveNum == 1)
         {
             if(stamina>=2)
             {
-                phrase = "You do " +red+ dmg + reset + " damage against " + enemy +"!";
+                phrase = "You do " +red+ dmg + reset + " damage against " + enemyName +"!";
             }
             else{
                 phrase = green + "foolish hero you can't use a skill you don't have the stamina for." + reset;
@@ -389,7 +392,7 @@ public class DungeonConquestSim {
         {
             if(stamina>=10)
             {
-                phrase = "You use your ultimate! You did a massive " + red + dmg + reset +" damage against " + enemy + "!";
+                phrase = "You use your ultimate! You did a massive " + red + dmg + reset +" damage against " + enemyName + "!";
             }
             else{
                 phrase = green + "foolish hero you can't use a skill you don't have the stamina for." + reset;
@@ -423,14 +426,15 @@ public class DungeonConquestSim {
      * @param hp = the amount of health the player currently possesses.
      * @return returns a formatted string that can be printed depending on the variable values in the parameter.
      */
-    public String moveMessageBoss(int moveNum, int dmg, int stamina, int hp)
+    public String moveMessageBoss(int moveNum, int dmg,int stamina, int hp)
     {
+        String enemyName = enemy.returnName();
         String phrase ="";
         if (moveNum == 1)
         {
             if(stamina>=2)
             {
-                phrase = "You do " + red + dmg + reset + " damage against " + enemy +"!";
+                phrase = "You do " + red + dmg + reset + " damage against " + enemyName +"!";
             }
             else{
                 phrase = blackBG + red + "..." + reset;
@@ -440,7 +444,7 @@ public class DungeonConquestSim {
         {
             if(stamina>=10)
             {
-                phrase = "You use your ultimate! You did a massive " + red +  dmg + reset +" damage against " + enemy + "!";
+                phrase = "You use your ultimate! You did a massive " + red +  dmg + reset +" damage against " + enemyName + "!";
             }
             else{
                 phrase = blackBG+red + "Stupid hero" + reset;
@@ -463,6 +467,87 @@ public class DungeonConquestSim {
             phrase = "You did nothing... it was not very effective!";
         }
         return phrase;
+    }
+
+    public void takeDamage(int dmg)
+    {
+        health-=dmg;
+    }
+
+    public String enemySpawn()
+    {
+        String enemyName = enemy.generateEnemies();
+        String describeEnemy = enemy.describeEnemy();
+        String enemyPrompt = "\nAn enemy appears before you...";
+        wait(2000);
+        enemyPrompt += "\nA wild " + enemyName + " appeared!";
+        enemyPrompt +="\n" + blue + describeEnemy + reset;
+        wait(2000);
+        enemyPrompt += "\n" +  green + "Now go kill it!" + reset +" says a distant voice";
+        wait(1500);
+        return enemyPrompt;
+    }
+
+    public String battleInformation()
+    {
+        int ehp = enemy.returnEHP();
+        String gameStats = green + "Player Health: " + health + reset;
+        gameStats += "\n" + blue + "Stamina: " + stamina + reset;
+        gameStats += "\n" + red + "Enemy Health: " + ehp + reset;
+        return gameStats;
+    }
+
+    public int returnCount()
+    {
+        return count;
+    }
+
+    public String bossMessage()
+    {
+        String boss = enemy.generateEnemies();
+        wait(1000);
+        String bossPrompt = green + "Good job hero, you have made it far. Far exceeding my expectations" + reset;
+        wait(1000);
+        bossPrompt += "\n" + green+"You have performed well so far but you have yet to face your greatest challenge...";
+        wait(1000);
+        bossPrompt += "\n" + blackBG + red + "Throughout heaven and earth, I alone am the honored one." + reset;
+        wait(1000);
+        bossPrompt += "\n" + blackBG + red + "It is I! DIO! No wait I meant IT IS I! The Ancient One!" + reset;
+        return bossPrompt;
+    }
+
+    public String enemyMove()
+    {
+        int enemyDmg = enemy.enemyMove();
+        takeDamage(enemyDmg);
+        return "\n"+enemy + " does " + red + enemyDmg +" damage!\n" + reset;
+
+    }
+
+    public boolean checkHP()
+    {
+        int hp = returnHP();
+        if (hp>0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public String bossMove()
+    {
+        String bossName = enemy.returnName();
+        String gameReply ="";
+        int enemyDMG = enemy.enemyMove();
+        if(enemyDMG>health)
+        {
+            gameReply+="\n" + blackBG + red + "Unlimited technique, Lime Green" +reset;
+            gameReply +="\nYou just got off screened!\n";
+        }
+        else {
+            gameReply += "\n"+bossName + " does " + red + enemyDMG +" damage!\n" + reset;
+        }
+        return gameReply;
     }
 
     /**
