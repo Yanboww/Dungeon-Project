@@ -46,7 +46,7 @@ public class DungeonConquestSim {
             int statBase = (int)(Math.random()*10)+1;
             health = statBase+100;
             stamina = statBase+2;
-            atk = statBase+6;
+            atk = statBase+60000;
             move = "Icicle Lance";
             ultimate = "Cocytus";
         }
@@ -104,7 +104,6 @@ public class DungeonConquestSim {
         {
             if(move.equals("Icicle Lance"))
             {
-                stamina-=2;
                 rollDice();
                 if (dice ==6)
                 {
@@ -120,7 +119,6 @@ public class DungeonConquestSim {
             }
             else if(move.equals("Cleave"))
             {
-                stamina-=2;
                 rollDice();
                 if (dice ==6)
                 {
@@ -136,7 +134,6 @@ public class DungeonConquestSim {
             }
             else
             {
-                stamina-=2;
                 rollDice();
                 if (dice ==6)
                 {
@@ -156,7 +153,6 @@ public class DungeonConquestSim {
             int dice = rollDice();
             if(ultimate.equals("Cocytus"))
             {
-                stamina-=10;
                 if (dice ==6)
                 {
                     dmg = dice*atk+30;
@@ -171,7 +167,6 @@ public class DungeonConquestSim {
             }
             else if(ultimate.equals("Strong Cleave")  )
             {
-                stamina-=10;
                 if (dice ==6)
                 {
                     dmg = dice+atk*3+20;
@@ -186,7 +181,6 @@ public class DungeonConquestSim {
             }
             else
             {
-                stamina-=10;
                 if (dice ==6)
                 {
                     dmg = dice*atk+15;
@@ -293,7 +287,7 @@ public class DungeonConquestSim {
     public boolean finale()
     {
         int ehp = enemy.returnEHP();
-        if (!(count==3 & ehp <= 0 || health <= 0) && count<2)
+        if (!(count==3 && ehp <= 0 || health <= 0) && count<2)
         {
             return true;
         }
@@ -342,10 +336,10 @@ public class DungeonConquestSim {
      *
      * @return returns a boolean value representing the status of the fight. True if won, false if otherwise.
      */
-    public boolean victory()
+    public boolean battling()
     {
         int ehp = enemy.returnEHP();
-        if (!(ehp <= 0 || health<=0))
+        if (ehp > 0 && health> 0)
         {
             return true;
         }
@@ -383,6 +377,7 @@ public class DungeonConquestSim {
             if(stamina>=2)
             {
                 phrase = "You do " +red+ dmg + reset + " damage against " + enemyName +"!";
+                this.stamina-=2;
             }
             else{
                 phrase = green + "foolish hero you can't use a skill you don't have the stamina for." + reset;
@@ -393,6 +388,7 @@ public class DungeonConquestSim {
             if(stamina>=10)
             {
                 phrase = "You use your ultimate! You did a massive " + red + dmg + reset +" damage against " + enemyName + "!";
+                this.stamina-=10;
             }
             else{
                 phrase = green + "foolish hero you can't use a skill you don't have the stamina for." + reset;
@@ -406,6 +402,7 @@ public class DungeonConquestSim {
                 int healed = health - hp;
                 phrase = green + "Oh Hero are you scared?" + red + "STOP HEALING AND GET KILLING!" + reset;
                 phrase += "\nYou healed " + healed + " hp!";
+                this.stamina-=2;
             }
             else{
                 phrase = green + "foolish hero you can't use a skill you don't have the stamina for." + reset;
@@ -479,12 +476,10 @@ public class DungeonConquestSim {
         String enemyName = enemy.generateEnemies();
         String describeEnemy = enemy.describeEnemy();
         String enemyPrompt = "\nAn enemy appears before you...";
-        wait(2000);
         enemyPrompt += "\nA wild " + enemyName + " appeared!";
         enemyPrompt +="\n" + blue + describeEnemy + reset;
-        wait(2000);
-        enemyPrompt += "\n" +  green + "Now go kill it!" + reset +" says a distant voice";
-        wait(1500);
+        enemyPrompt += "\n" +  green + "Now go kill it!" + reset +" says a distant voice\n";
+        wait(1000);
         return enemyPrompt;
     }
 
@@ -505,24 +500,31 @@ public class DungeonConquestSim {
     public String bossMessage()
     {
         String boss = enemy.generateEnemies();
-        wait(1000);
         String bossPrompt = green + "Good job hero, you have made it far. Far exceeding my expectations" + reset;
-        wait(1000);
         bossPrompt += "\n" + green+"You have performed well so far but you have yet to face your greatest challenge...";
-        wait(1000);
         bossPrompt += "\n" + blackBG + red + "Throughout heaven and earth, I alone am the honored one." + reset;
-        wait(1000);
         bossPrompt += "\n" + blackBG + red + "It is I! DIO! No wait I meant IT IS I! The Ancient One!" + reset;
         return bossPrompt;
     }
 
     public String enemyMove()
     {
+        String enemyName = enemy.returnName();
         int enemyDmg = enemy.enemyMove();
         takeDamage(enemyDmg);
-        return "\n"+enemy + " does " + red + enemyDmg +" damage!\n" + reset;
+        return "\n"+ enemyName + " does " + red + enemyDmg +" damage!\n" + reset;
 
     }
+
+    public String playerChoice()
+    {
+        String choice = "What is your move?\n1) use skill(2 stamina)";
+        choice += "\n2) use ultimate(10 stamina)";
+        choice+="\n3) heal(2 stamina)";
+        choice+="\n4) do nothing\n:";
+        return choice;
+    }
+
 
     public boolean checkHP()
     {

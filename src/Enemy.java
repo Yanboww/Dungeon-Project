@@ -50,7 +50,7 @@ public class Enemy {
     {
         if (enemy.equals("The Ancient One"))
         {
-            ehp = 400;
+            ehp = 300;
             eatk = 20;
 
         }
@@ -62,13 +62,13 @@ public class Enemy {
         }
         else if (enemy.equals("Cute Slime that you must murder(you have no choice)"))
         {
-            ehp = 400;
+            ehp = 150;
             eatk = 0;
 
         }
         else {
             ehp = 100;
-            eatk = 5;
+            eatk = 50000000;
 
         }
     }

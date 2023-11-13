@@ -35,29 +35,24 @@ public class DungeonRunner {
         while (newGame.finale())
         {
             //spawns enemy
-            newGame.wait(2000);
-            String enemy = enemyClass.returnName();
             String enemyPrompt = newGame.enemySpawn();
             System.out.println(enemyPrompt);
-            boolean victory = newGame.victory();
-            while (victory)
+            while (newGame.battling())
             {
                 int hp = newGame.returnHP();
                 //player actions
                 String gameStats = newGame.battleInformation();
                 System.out.println(gameStats);
-                System.out.print("What is your move?\n1) use skill(2 stamina)\n2) use ultimate(10 stamina)\n3) heal(2 stamina)\n4) do nothing\n:");
+                System.out.print(newGame.playerChoice());
                 String moveNumString = s.nextLine();
                 int moveNum = Integer.parseInt(moveNumString);
                 int dmg = newGame.useMove(moveNum);
-                newGame.wait(1000);
                 int stamina = newGame.returnStamina();
                 System.out.println(newGame.moveMessage(moveNum,dmg,stamina,hp));
                 newGame.wait(1000);
                 newGame.changeStamina();
-                victory = newGame.victory();
                 //enemy move
-                if(victory)
+                if(newGame.battling())
                 {
                     String enemyMove = newGame.enemyMove();
                     System.out.println(enemyMove);
@@ -78,23 +73,21 @@ public class DungeonRunner {
             count++;
             String bossSpeech = newGame.bossMessage();
             System.out.println(bossSpeech);
-            while(newGame.finale() && newGame.victory())
+            while(newGame.battling())
             {
                 int hp = newGame.returnHP();
                 String gameStats = newGame.battleInformation();
                 System.out.println(gameStats);
                 //player move
-                newGame.wait(1500);
-                System.out.print("What is your move?\n1) use skill(2 stamina)\n2) use ultimate(10 stamina)\n3) heal(2 stamina)\n4) do nothing\n:");
+                System.out.print(newGame.playerChoice());
                 String moveNumString = s.nextLine();
                 int moveNum = Integer.parseInt(moveNumString);
                 int dmg = newGame.useMove(moveNum);
-                newGame.wait(1000);
                 int stamina = newGame.returnStamina();
                 System.out.println(newGame.moveMessageBoss(moveNum,dmg,stamina,hp));
                 newGame.changeStamina();
                 //boss move
-                if(newGame.victory())
+                if(newGame.battling())
                 {
                     //changes reply based on boss damage
                    String bossMove = newGame.bossMove();
